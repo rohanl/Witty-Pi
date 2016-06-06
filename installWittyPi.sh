@@ -22,6 +22,16 @@ else
   exit 1
 fi
 
+# Detect type of init (SysV or systemd)
+/usr/bin/ps -p1 | /usr/bin/grep -q systemd
+if [ $? -eq 0 ]; then
+  INIT=systemd
+  MODULES=/etc/modules-load.d/raspberrypi.conf
+else
+  INIT=sysv
+  MODULES=/etc/modules
+fi
+
 # target directory
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/wittyPi"
 
@@ -36,15 +46,15 @@ echo '==========================================================================
 
 # enable I2C on Raspberry Pi
 echo '>>> Enable I2C'
-if grep -q 'i2c-bcm2708' /etc/modules; then
+if grep -q 'i2c-bcm2708' ${MODULES}; then
   echo 'Seems i2c-bcm2708 module already exists, skip this step.'
 else
-  echo 'i2c-bcm2708' >> /etc/modules
+  echo 'i2c-bcm2708' >> ${MODULES}
 fi
-if grep -q 'i2c-dev' /etc/modules; then
+if grep -q 'i2c-dev' ${MODULES}; then
   echo 'Seems i2c-dev module already exists, skip this step.'
 else
-  echo 'i2c-dev' >> /etc/modules
+  echo 'i2c-dev' >> ${MODULES}
 fi
 if grep -q 'dtparam=i2c1=on' /boot/config.txt; then
   echo 'Seems i2c1 parameter already set, skip this step.'
