@@ -83,6 +83,18 @@ if [ $ERR -eq 0 ]; then
       echo "Git is missing, install it now..."
       apt-get install -y git || ((ERR++))
     fi
+    if hash make 2>/dev/null; then
+      echo "Make is ready to go..."
+    else
+      echo "Make is missing, install it now..."
+      apt-get install -y make || ((ERR++))
+    fi
+    if hash gcc 2>/dev/null; then
+      echo "gcc is ready to go..."
+    else
+      echo "gcc is missing, install it now..."
+      apt-get install -y gcc || ((ERR++))
+    fi
     if [ $ERR -eq 0 ]; then
       git clone git://git.drogon.net/wiringPi || ((ERR++))
       cd wiringPi
