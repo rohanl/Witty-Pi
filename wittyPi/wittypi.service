@@ -1,0 +1,13 @@
+[Unit]
+Description=Witty Pi: Realtime Clock + Power Management for Raspberry Pi
+Documentation=http://www.uugear.com/witty-pi-realtime-clock-power-management-for-raspberry-pi/
+ConditionCapability=CAP_WAKE_ALARM
+
+[Service]
+Type=simple
+ExecStart=/home/pi/wittyPi/daemon.sh
+ExecStartPost=/home/pi/wittyPi/runScript.sh >> /home/pi/wittyPi/schedule.log
+ExecStartPost=/home/pi/wittyPi/syncTime.sh 60
+
+[Install]
+WantedBy=multi-user.target

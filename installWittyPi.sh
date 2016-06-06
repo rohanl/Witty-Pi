@@ -137,9 +137,15 @@ if [ $ERR -eq 0 ]; then
     chmod +x daemon.sh
     chmod +x syncTime.sh
     chmod +x runScript.sh
-    sed -e "s#/home/pi/wittyPi#$DIR#g" init.sh >/etc/init.d/wittypi
-    chmod +x /etc/init.d/wittypi
-    update-rc.d wittypi defaults
+    if [ ${INIT} = sysv ]; then
+      sed -e "s#/home/pi/wittyPi#$DIR#g" init.sh >/etc/init.d/wittypi
+      chmod +x /etc/init.d/wittypi
+      update-rc.d wittypi defaults
+    fi
+    if [ ${INIT} = systemd ]; then
+      sed -e "s#/home/pi/wittyPi#$DIR#g" wittypi.service >/etc/systemd/system/wittypi.service
+      systemctl enable wittypi.service
+    fi
     cd ..
     sleep 2
     rm wittyPi.zip
