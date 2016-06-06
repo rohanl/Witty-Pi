@@ -12,6 +12,16 @@ if [ "$(id -u)" != 0 ]; then
   exit 1
 fi
 
+# Detect which package manager to use for install
+if hash apt-get 2>/dev/null; then
+  INSTALL='apt-get install -y'
+elif hash pacman 2>/dev/null; then
+  INSTALL='pacman -S --noconfirm'
+else
+  echo "don't know how to install packages"
+  exit 1
+fi
+
 # target directory
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/wittyPi"
 
@@ -68,7 +78,7 @@ echo '>>> Install i2c-tools'
 if hash i2cget 2>/dev/null; then
   echo 'Seems i2c-tools is installed already, skip this step.'
 else
-  apt-get install -y i2c-tools || ((ERR++))
+  ${INSTALL} i2c-tools || ((ERR++))
 fi
 
 # install wiringPi
@@ -81,19 +91,19 @@ if [ $ERR -eq 0 ]; then
       echo "Git is ready to go..."
     else
       echo "Git is missing, install it now..."
-      apt-get install -y git || ((ERR++))
+      ${INSTALL} git || ((ERR++))
     fi
     if hash make 2>/dev/null; then
       echo "Make is ready to go..."
     else
       echo "Make is missing, install it now..."
-      apt-get install -y make || ((ERR++))
+      ${INSTALL} make || ((ERR++))
     fi
     if hash gcc 2>/dev/null; then
       echo "gcc is ready to go..."
     else
       echo "gcc is missing, install it now..."
-      apt-get install -y gcc || ((ERR++))
+      ${INSTALL} gcc || ((ERR++))
     fi
     if [ $ERR -eq 0 ]; then
       git clone git://git.drogon.net/wiringPi || ((ERR++))
